@@ -40,7 +40,6 @@ const create = (req, res) => {
   const account = new Account();
 
   delete req.body._id
-  Object.assign(account, req.body, {state: 'Active'})
 
   account.save(err => {
     if (err) {

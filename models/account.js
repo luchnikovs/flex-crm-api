@@ -8,7 +8,7 @@ const opts = {
   }
 };
 
-const accountSchema = mongoose.Schema({
+const AccountSchema = mongoose.Schema({
   billingAddress: {
     addressLine1: String,
     addressLine2: String,
@@ -47,7 +47,7 @@ const accountSchema = mongoose.Schema({
   successfulSubscriptions: Number
 }, opts);
 
-accountSchema.virtual('state')
+AccountSchema.virtual('state')
   .get(function () {
     const ACTIVE_STATE_DAYS = 90; // Count of days before the current day for 'Active' state
     const dateDiff = moment().diff(this.created, 'days')
@@ -61,4 +61,4 @@ accountSchema.virtual('state')
     }
   });
 
-module.exports = mongoose.model('Account', accountSchema);
+module.exports = mongoose.model('Account', AccountSchema);
