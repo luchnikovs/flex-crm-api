@@ -62,4 +62,4 @@ const authenticate = (req, res) => {
     });
 };
 
-module.exports = {createUser, authenticate}
+module.exports = {createUser, authenticate};
