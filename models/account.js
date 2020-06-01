@@ -20,7 +20,7 @@ const AccountSchema = mongoose.Schema({
   },
   email: {
     type: String,
-    unique: false,
+    unique: true,
     lowercase: true,
     required: true,
     // validate: {

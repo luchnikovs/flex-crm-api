@@ -1,14 +1,17 @@
-const Account = require('../models/account');
+const Subscription = require('../models/subscription');
 
-// Get list of accounts
+// Get list of subscriptions
 const getList = (req, res) => {
-  const {skip = 0, limit = 20, sortColumn = '_id', sortType = 'asc'} = req.query
+  const {skip = 0, limit = 20, sortColumn = '_id', sortType = 'asc', accountId} = req.query
+  const findOptions = accountId ? {accountId} : {}
 
-  Account.find()
+  Subscription.find(findOptions)
     .skip(+skip)
     .limit(+limit)
     .sort(({[sortColumn]: sortType}))
-    .exec((err, accounts) => {
+    .exec((err, subscriptions) => {
+      console.log(subscriptions);
+
       if (err) {
         res.json({
           status: 'error',
@@ -18,30 +21,30 @@ const getList = (req, res) => {
 
       res.json({
         status: 'success',
-        result: accounts
+        result: subscriptions
       });
     });
 };
 
-// Get account
+// Get subscription
 const getOnce = (req, res) => {
-  Account.findById(req.params.id, (err, account) => {
+  Subscription.findById(req.params.id, (err, subscription) => {
     if (err)
       res.send(err);
     res.json({
       message: 'Account details loading..',
-      result: account
+      result: subscription
     });
   });
 };
 
-// Create account
+// Create subscription
 const create = (req, res) => {
-  const account = new Account();
+  const subscription = new Subscription();
 
-  delete req.body._id
+  Object.assign(subscription, req.body)
 
-  account.save(err => {
+  subscription.save(err => {
     if (err) {
       if(err.name === 'ValidationError') {
         return res.status(400).send({
@@ -55,46 +58,44 @@ const create = (req, res) => {
     }
 
     return res.status(200).json({
-      message: 'Account created',
-      result: account
+      message: 'Subscription created',
+      result: subscription
     });
   });
 };
 
-// Update account
+// Update subscription
 const update = (req, res) => {
-  Account.findById(req.params.id, (err, account) => {
+  Subscription.findById(req.params.id, (err, subscription) => {
     if (err) res.send(err);
 
-    Object.assign(account, req.body)
+    Object.assign(subscription, req.body)
 
-    account.save(err => {
+    subscription.save(err => {
       if (err) res.json(err);
 
       res.json({
         message: 'Account Info updated',
-        result: account
+        result: subscription
       });
     });
   });
 };
 
-// Delete account
+// Delete subscription
 const remove = (req, res) => {
-  Account.findOneAndDelete({_id: req.params.id},
-    (err, account) => {
+  Subscription.findOneAndDelete({_id: req.params.id},
+    (err, subscription) => {
       if (err) res.send({
         status: 'error',
         message: err.message
       });
 
       res.json({
-        message: 'Account deleted',
-        result: account
+        message: 'Credit expired',
+        result: subscription
       });
     });
 };
 
-const sum = (a, b) => a + b
-
-module.exports = {getList, getOnce, create, update, remove, sum}
+module.exports = {getList, getOnce, create, update, remove}
