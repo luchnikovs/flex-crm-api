@@ -37,28 +37,28 @@ const getOnce = (req, res) => {
 
 // Create account
 const create = (req, res) => {
-  const account = new Account();
-
-  delete req.body._id
-  Object.assign(account, req.body, {state: 'Active'})
+  if (req.body && req.body._id) delete req.body._id
+  const account = new Account(req.body);
 
   account.save(err => {
     if (err) {
-      if(err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
         return res.status(400).send({
           message: err.message
         });
       } else {
         return res.status(500).send({
-          message: 'Server error'
+          message: err
         });
       }
     }
 
-    return res.status(200).json({
-      message: 'Account created',
-      result: account
-    });
+    return res
+      .status(200)
+      .json({
+        message: 'Account created',
+        result: account
+      });
   });
 };
 
@@ -96,4 +96,6 @@ const remove = (req, res) => {
     });
 };
 
-module.exports = {getList, getOnce, create, update, remove}
+const sum = (a, b) => a + b
+
+module.exports = {getList, getOnce, create, update, remove, sum}

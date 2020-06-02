@@ -8,7 +8,7 @@ const opts = {
   }
 };
 
-const creditSchema = mongoose.Schema({
+const CreditSchema = mongoose.Schema({
   accountId: {
     type: mongoose.Schema.Types.ObjectId,
     required: true
@@ -33,7 +33,7 @@ const creditSchema = mongoose.Schema({
   description: String
 }, opts);
 
-creditSchema.virtual('state')
+CreditSchema.virtual('state')
   .get(function () {
     const isExpired = moment(new Date()).diff(this.expires, 'seconds') <= 0;
 
@@ -44,4 +44,4 @@ creditSchema.virtual('state')
     }
   });
 
-module.exports = mongoose.model('Credit', creditSchema);
+module.exports = mongoose.model('Credit', CreditSchema);
