@@ -37,27 +37,28 @@ const getOnce = (req, res) => {
 
 // Create account
 const create = (req, res) => {
-  const account = new Account();
-
-  delete req.body._id
+  if (req.body && req.body._id) delete req.body._id
+  const account = new Account(req.body);
 
   account.save(err => {
     if (err) {
-      if(err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
         return res.status(400).send({
           message: err.message
         });
       } else {
         return res.status(500).send({
-          message: 'Server error'
+          message: err
         });
       }
     }
 
-    return res.status(200).json({
-      message: 'Account created',
-      result: account
-    });
+    return res
+      .status(200)
+      .json({
+        message: 'Account created',
+        result: account
+      });
   });
 };
 
