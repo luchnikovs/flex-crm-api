@@ -1,5 +1,7 @@
-const User = require('../models/user');
-const bCrypt = require('bcrypt');
+const jwt = require('jsonwebtoken')
+const bCrypt = require('bcrypt')
+const config = require('../config')
+const User = require('../models/user')
 
 // Create a new user
 const createUser = (req, res) => {
@@ -40,26 +42,30 @@ const authenticate = (req, res) => {
       if (err) {
         return res.status(400).send({
           message: err.message
-        });
+        })
       } else if (!user) {
         return res.status(401).send({
-          message: 'User not found.'
+          message: 'Email or Password are wrong.'
         });
       }
 
       bCrypt.compare(password, user.password, function (err, result) {
         if (result === true) {
+          const token = jwt.sign({email: user.email}, config.tokenSecret, {expiresIn: config.tokenExp})
+
+          res.cookie('token', token, {httpOnly: true})
+
           return res.status(200).json({
             message: 'User authorized',
-            result: user
+            result: {token}
           });
         } else {
           return res.status(401).send({
-            message: 'User not found.'
-          });
+            message: 'Email or Password are wrong.'
+          })
         }
       })
-    });
-};
+    })
+}
 
 module.exports = {createUser, authenticate};

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Test</title>
+	</head>
+	<body>
+		<input id="auth" type="button" value="Auth">
+		<input id="getFood" type="button" value="Get Food">
+	</body>
+	<script>
+		const getElById = name => {
+			return document.getElementById(name)
+		}
+
+		const authBtn = getElById('auth')
+		const getFoodBtn = getElById('getFood')
+
+		authBtn.addEventListener('click', async () => {
+			const response = await fetch('http://localhost:5000/api/auth/sign-in', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json;charset=utf-8'
+				},
+				body: JSON.stringify({
+					email: "harvey2009@yandex.ru",
+					password: "892451"
+				})
+			})
+			
+			const result = await response.json()
+		})
+
+		getFoodBtn.addEventListener('click', async () => {
+			const response = await fetch('http://localhost:5000/api')
+		})
+	</script>
+</html>
