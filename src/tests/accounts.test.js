@@ -1,58 +1,44 @@
 const request = require('supertest')
-const express = require('express')
-const bodyParser = require('body-parser')
-const {dbConnect, dbDisconnect} = require('../appHelpers')
+const {app, testDbConnect, testDbDisconnect} = require('./test-helpers')
 const AccountModel = require('../models/account')
-const routes = require('../routes/index')
 
-const app = express()
-
-app.use(bodyParser.json())
-app.use('/', routes)
-
-const TEST_EMAIL = "test@test.com"
+const TEST_EMAIL = "john@test.com"
 const TEST_NAME = "John Test"
+const TEST_EMAIL_2 = "alex@test.com"
+const TEST_NAME_2 = "Alex Test"
 
-const createAccount = async (...args) => {
-  account = new AccountModel(
-    Object.assign(
-    	{email: TEST_EMAIL, firstName: TEST_NAME},
-    	...args
-    )
-  )
-
-  await account.save()
-  return account
+const accountData = {
+  email: TEST_EMAIL, 
+  firstName: TEST_NAME
 }
 
-const cleanCollection = async () => {
-  await AccountModel.deleteMany({})
+const accountData2 = {
+  email: TEST_EMAIL_2, 
+  firstName: TEST_NAME_2
 }
 
-// it('API works', async done => {
-//   const res = await request(app).get('/')
+it('API works', async done => {
+  const res = await request(app).get('/')
 
-//   const account = new Account();
-
-//   expect(res.status).toBe(200);
-//   done()
-// });
+  expect(res.status).toBe(200);
+  done()
+});
 
 describe('Accounts API', () => {
   beforeAll(async () => {
-    await dbConnect()
+    await testDbConnect()
   });
   
   afterAll(async () => {
-    await dbDisconnect()
+    await testDbDisconnect()
   });
 
   afterEach(async () => {
-    await cleanCollection()
+    await AccountModel.deleteMany({})
   })
 
   it('GET accounts/:id    (get once account)', async done => {
-    const account = await createAccount()
+    const account = await new AccountModel(accountData).save()
 
     const res = await request(app).get(`/accounts/${account._id}`)
 
@@ -62,8 +48,8 @@ describe('Accounts API', () => {
   })
 
   it('GET accounts/       (get list of accounts)', async done => {
-    await createAccount()
-    await createAccount({email: 'test2@test.com', firstName: 'John Test 2'})
+    await new AccountModel(accountData).save()
+    await new AccountModel(accountData2).save()
 
     const res = await request(app).get('/accounts')
 
@@ -85,7 +71,7 @@ describe('Accounts API', () => {
   })
 
   it('DELETE accounts/    (delete account)', async done => {
-    const account = await createAccount()
+    const account = await new AccountModel(accountData).save()
 
     const res = await request(app).delete(`/accounts/${account._id}`)
     
