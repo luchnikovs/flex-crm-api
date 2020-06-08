@@ -2,7 +2,7 @@
   "name": "bf-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "start": "node ./index.js",
     "dev": "nodemon ./index.js",
@@ -16,9 +16,12 @@
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
+    "csurf": "^1.11.0",
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "express-jwt": "^5.3.3",
     "express-session": "^1.17.1",
+    "helmet": "^3.22.0",
     "jest": "^25.5.4",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
@@ -28,12 +31,14 @@
     "uuid": "^7.0.3"
   },
   "devDependencies": {
-    "cross-env": "^7.0.2",
     "mongodb-memory-server": "^6.6.1",
-    "nodemon": "^2.0.2"
+    "nodemon": "^2.0.2",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-node-externals": "^1.7.2"
   },
   "jest": {
-    "rootDir": "./tests",
+    "rootDir": "./src/tests",
     "testEnvironment": "node",
     "coveragePathIgnorePatterns": [
       "/node_modules/"

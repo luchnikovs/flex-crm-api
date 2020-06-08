@@ -1,6 +1,5 @@
 const jwt = require('jsonwebtoken')
 const bCrypt = require('bcrypt')
-const config = require('../config')
 const User = require('../models/user')
 
 // Create a new user
@@ -35,6 +34,10 @@ const createUser = (req, res) => {
   }
 };
 
+const getCsrfToken = (req, res) => { 
+  res.json({csrfToken: req.csrfToken()}); 
+}
+
 const authenticate = (req, res) => {
   const {email, password} = req.body
 
@@ -51,7 +54,7 @@ const authenticate = (req, res) => {
 
       bCrypt.compare(password, user.password, function (err, result) {
         if (result === true) {
-          const token = jwt.sign({email: user.email}, config.tokenSecret, {expiresIn: config.tokenExp})
+          const token = jwt.sign({email: user.email}, process.env.TOKEN_SECRET, {expiresIn: process.env.TOKEN_EXP})
 
           res.cookie('token', token, {httpOnly: true})
 
@@ -68,4 +71,4 @@ const authenticate = (req, res) => {
     })
 }
 
-module.exports = {createUser, authenticate};
+module.exports = {createUser, getCsrfToken, authenticate};
