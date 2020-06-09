@@ -1,5 +1,5 @@
 const request = require('supertest')
-const {app, testDbConnect, testDbDisconnect} = require('./test-helpers')
+const {app, token, createUser, testDbConnect, testDbDisconnect} = require('./test-helpers')
 const AccountModel = require('../models/account')
 
 const TEST_EMAIL = "john@test.com"
@@ -8,17 +8,18 @@ const TEST_EMAIL_2 = "alex@test.com"
 const TEST_NAME_2 = "Alex Test"
 
 const accountData = {
-  email: TEST_EMAIL, 
+  email: TEST_EMAIL,
   firstName: TEST_NAME
 }
 
 const accountData2 = {
-  email: TEST_EMAIL_2, 
+  email: TEST_EMAIL_2,
   firstName: TEST_NAME_2
 }
 
 it('API works', async done => {
-  const res = await request(app).get('/')
+  const res = await request(app)
+    .get('/')
 
   expect(res.status).toBe(200);
   done()
@@ -27,6 +28,7 @@ it('API works', async done => {
 describe('Accounts API', () => {
   beforeAll(async () => {
     await testDbConnect()
+    await createUser()
   });
   
   afterAll(async () => {
@@ -40,7 +42,9 @@ describe('Accounts API', () => {
   it('GET accounts/:id    (get once account)', async done => {
     const account = await new AccountModel(accountData).save()
 
-    const res = await request(app).get(`/accounts/${account._id}`)
+    const res = await request(app)
+      .get(`/accounts/${account._id}`)
+      .set('Authorization', `Bearer ${token}`)
 
     expect(res.status).toBe(200)
     expect(res.body.result.email).toBe(TEST_EMAIL)
@@ -51,7 +55,9 @@ describe('Accounts API', () => {
     await new AccountModel(accountData).save()
     await new AccountModel(accountData2).save()
 
-    const res = await request(app).get('/accounts')
+    const res = await request(app)
+      .get('/accounts')
+      .set('Authorization', `Bearer ${token}`)
 
     expect(res.status).toBe(200)
     expect(res.body.result.length).toBe(2)
@@ -63,6 +69,7 @@ describe('Accounts API', () => {
     const res = await request(app)
       .post(`/accounts`)
       .send({email: TEST_EMAIL, firstName: TEST_NAME})
+      .set('Authorization', `Bearer ${token}`)
       .set('Accept', 'application/json')
 
     expect(res.status).toBe(200);
@@ -73,7 +80,9 @@ describe('Accounts API', () => {
   it('DELETE accounts/    (delete account)', async done => {
     const account = await new AccountModel(accountData).save()
 
-    const res = await request(app).delete(`/accounts/${account._id}`)
+    const res = await request(app)
+      .delete(`/accounts/${account._id}`)
+      .set('Authorization', `Bearer ${token}`)
     
     expect(res.status).toBe(200)
     await AccountModel.findById(res.body.result._id, (err, response) => {

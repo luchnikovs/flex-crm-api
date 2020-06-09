@@ -13,7 +13,7 @@ const createUser = (req, res) => {
       password,
     }
 
-    User.create(userData, function (err, user) {
+    User.create(userData, (err, user) => {
       if (err) {
         if(err.name === 'ValidationError') {
           return res.status(400).send({
@@ -33,10 +33,6 @@ const createUser = (req, res) => {
     });
   }
 };
-
-const getCsrfToken = (req, res) => { 
-  res.json({csrfToken: req.csrfToken()}); 
-}
 
 const authenticate = (req, res) => {
   const {email, password} = req.body
@@ -71,4 +67,4 @@ const authenticate = (req, res) => {
     })
 }
 
-module.exports = {createUser, getCsrfToken, authenticate};
+module.exports = {createUser, authenticate};

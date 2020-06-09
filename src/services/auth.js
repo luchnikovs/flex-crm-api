@@ -7,9 +7,11 @@ const getTokenFromHeader = req => {
 }
 
 const isAuth = jwt({
-  secret: process.env.TOKEN_SECRET, // Тут должно быть то же самое, что использовалось при подписывании JWT
-  userProperty: 'something', // Здесь следующее промежуточное ПО сможет найти то, что было закодировано в services/auth:generateToken -> 'req.token'
-  getToken: req => req.cookies.token
+  secret: process.env.TOKEN_SECRET,
+  userProperty: 'something',
+  getToken: req => {
+    return process.env.NODE_ENV === 'test' ? getTokenFromHeader(req) : req.cookies.token || getTokenFromHeader(req)
+  }
 })
 
-module.exports = {getTokenFromHeader, isAuth}
+module.exports = {isAuth}
