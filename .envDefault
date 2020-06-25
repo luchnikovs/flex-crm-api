@@ -1,0 +1,16 @@
+
+# IMPORTANT: You should rename this file from .envDefault to .env and add mongodb url for it to work
+
+# DB Config
+// MongoDB URL required for API to work.
+// You can create a database and get url in MongoDB Cloud (https://account.mongodb.com/account/login) or anywhere else.
+DB_URL = ""
+
+# Token Config
+TOKEN_SECRET = "tokenSecret"
+TOKEN_EXP = "15m"
+
+# Test User Data
+TEST_USER_NAME = "Santa Claus"
+TEST_USER_EMAIL = "santa@sc.com"
+TEST_USER_PASSWORD = "password123"
