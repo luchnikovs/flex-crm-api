@@ -13,7 +13,7 @@ const createUser = (req, res) => {
       password,
     }
 
-    User.create(userData, function (err, user) {
+    User.create(userData, (err, user) => {
       if (err) {
         if(err.name === 'ValidationError') {
           return res.status(400).send({
@@ -34,10 +34,6 @@ const createUser = (req, res) => {
   }
 };
 
-const getCsrfToken = (req, res) => { 
-  res.json({csrfToken: req.csrfToken()}); 
-}
-
 const authenticate = (req, res) => {
   const {email, password} = req.body
 
@@ -56,11 +52,13 @@ const authenticate = (req, res) => {
         if (result === true) {
           const token = jwt.sign({email: user.email}, process.env.TOKEN_SECRET, {expiresIn: process.env.TOKEN_EXP})
 
-          res.cookie('token', token, {httpOnly: true})
+          // res.cookie('token', token, {httpOnly: true})
 
           return res.status(200).json({
             message: 'User authorized',
-            result: {token}
+            result: {
+              token
+            }
           });
         } else {
           return res.status(401).send({
@@ -71,4 +69,4 @@ const authenticate = (req, res) => {
     })
 }
 
-module.exports = {createUser, getCsrfToken, authenticate};
+module.exports = {createUser, authenticate};

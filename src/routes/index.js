@@ -6,11 +6,9 @@ const subscriptionsController = require('../controllers/subscriptions')
 const creditsController = require('../controllers/credits')
 
 // API check
-router.route('/').get(
-  isAuth,
-  (req, res) => {
-    res.status(200).send("API works!");
-  })
+router.route('/').get((req, res) => {
+  res.status(200).send("API works!");
+})
 
 // Registration
 router.route('/auth/sign-up')

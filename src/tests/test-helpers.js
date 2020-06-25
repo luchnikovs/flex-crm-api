@@ -1,8 +1,11 @@
+const dotenv = require('dotenv').config()
+const jwt = require('jsonwebtoken')
 const express = require('express')
 const mongoose = require('mongoose')
 const bodyParser = require('body-parser')
 const routes = require('../routes/index')
 const {MongoMemoryServer} = require('mongodb-memory-server')
+const UserModel = require('../models/user')
 
 const app = express()
 
@@ -14,6 +17,18 @@ const opts = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true
+}
+
+const token = jwt.sign({email: process.env.TEST_USER_EMAIL}, process.env.TOKEN_SECRET, {expiresIn: process.env.TOKEN_EXP})
+
+const createUser = async () => {
+  const userData = {
+    email: process.env.TEST_USER_EMAIL,
+    username: process.env.TEST_USER_NAME,
+    password: process.env.TEST_USER_PASSWORD
+  }
+
+  await new UserModel(userData).save()
 }
 
 const testDbConnect = async () => {
@@ -29,4 +44,4 @@ const testDbDisconnect = async () => {
   await mongoServer.stop()
 }
 
-module.exports = {app, testDbConnect, testDbDisconnect}
+module.exports = {app, token, createUser, testDbConnect, testDbDisconnect}

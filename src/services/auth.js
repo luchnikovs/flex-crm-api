@@ -1,15 +1,18 @@
 const jwt = require('express-jwt')
 
 const getTokenFromHeader = req => {
+  console.log(req.headers);
   if (req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer') {
     return req.headers.authorization.split(' ')[1];
   }
 }
 
 const isAuth = jwt({
-  secret: process.env.TOKEN_SECRET, // Тут должно быть то же самое, что использовалось при подписывании JWT
-  userProperty: 'something', // Здесь следующее промежуточное ПО сможет найти то, что было закодировано в services/auth:generateToken -> 'req.token'
-  getToken: req => req.cookies.token
+  secret: process.env.TOKEN_SECRET,
+  userProperty: 'something',
+  getToken: req => {
+    return getTokenFromHeader(req)
+  }
 })
 
-module.exports = {getTokenFromHeader, isAuth}
+module.exports = {isAuth}
